@@ -6,7 +6,20 @@ const uiConfig = {
       // User successfully signed in.
       // Return type determines whether we continue the redirect automatically
       // or whether we leave that to developer to handle.
-      return true;
+      const { user } = authResult;
+
+      if (authResult.additionalUserInfo.isNewUser) {
+        // Create a "users collection"
+        db.collection('users')
+          .doc(user.uid) // Define a document for a user with UID as a document type
+          .set({
+            name: user.displayName,
+            email: user.email,
+          }).then(() => {
+            window.location.assign('main.html');
+          })
+          .catch(console.log);
+      }
     },
     uiShown() {
       // The widget is rendered.
